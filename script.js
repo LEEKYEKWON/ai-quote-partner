@@ -149,6 +149,14 @@ function showStep(step) {
     if (currentSection) {
         currentSection.classList.add('active');
         console.log('Added active to form section:', currentSection); // 디버깅용
+        
+        // 모바일에서 자동 스크롤: 상단으로 스크롤
+        if (window.innerWidth <= 768) {
+            currentSection.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
     } else {
         console.error('Form section not found for step:', step); // 디버깅용
     }
@@ -586,20 +594,36 @@ quoteForm.addEventListener('submit', function(e) {
     e.preventDefault();
     
     if (validateCurrentStep()) {
-        const formData = collectFormData();
+        // 로딩 상태 표시
+        const loadingState = document.getElementById('loadingState');
+        const quoteForm = document.getElementById('quoteForm');
         
-        // AI 견적 생성
-        const quote = generateAIQuote(formData);
-        
-        // 결과 표시
-        renderQuote(quote, formData);
-        quoteResult.style.display = 'block';
-        
-        // 견적 결과 버튼들 이벤트 바인딩
-        bindQuoteResultButtons(formData, quote);
-        
-        // 결과로 스크롤
-        quoteResult.scrollIntoView({ behavior: 'smooth' });
+        if (loadingState && quoteForm) {
+            loadingState.style.display = 'block';
+            quoteForm.style.display = 'none';
+            
+            // 견적 계산 시뮬레이션 (실제로는 즉시 계산되지만 사용자 경험을 위해)
+            setTimeout(() => {
+                const formData = collectFormData();
+                
+                // AI 견적 생성
+                const quote = generateAIQuote(formData);
+                
+                // 로딩 상태 숨기기
+                loadingState.style.display = 'none';
+                quoteForm.style.display = 'block';
+                
+                // 결과 표시
+                renderQuote(quote, formData);
+                quoteResult.style.display = 'block';
+                
+                // 견적 결과 버튼들 이벤트 바인딩
+                bindQuoteResultButtons(formData, quote);
+                
+                // 결과로 스크롤
+                quoteResult.scrollIntoView({ behavior: 'smooth' });
+            }, 2000); // 2초 로딩 표시
+        }
     } else {
         alert('필수 항목을 모두 입력해주세요.');
     }
