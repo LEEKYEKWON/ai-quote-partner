@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 견적파트너</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+                    <div class="header-banner">
+            <div class="banner-text">
+                <h1 class="banner-title">AI 견적파트너</h1>
+                <p class="banner-subtitle">맞춤 견적과 파트너 매칭을 한번에!</p>
+            </div>
+        </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="welcome-section">
+                <h2>5분 만에 홈페이지 견적 받기!</h2>
+                <p>간단한 설문을 통해 AI가 분석한 맞춤형 견적과 추천 개발자를 만나보세요!</p>
+                <div class="progress-bar">
+                    <div class="progress-step active" data-step="1">1</div>
+                    <div class="progress-step" data-step="2">2</div>
+                    <div class="progress-step" data-step="3">3</div>
+                    <div class="progress-step" data-step="4">4</div>
+                    <div class="progress-step" data-step="5">5</div>
+                </div>
+            </div>
+
+            <form id="quoteForm" class="quote-form">
+                <!-- STEP 1: 기본 정보 -->
+                <div class="form-section step-section active" data-step="1">
+                    <h3>📋 STEP 1. 기본 정보</h3>
+                    <div class="form-group">
+                        <label for="businessName">회사/서비스명 *</label>
+                        <input type="text" id="businessName" name="businessName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactName">담당자명 *</label>
+                        <input type="text" id="contactName" name="contactName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">이메일 *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">연락처</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="industry">업종 *</label>
+                        <select id="industry" name="industry" required>
+                            <option value="">업종을 선택해주세요</option>
+                            <option value="ecommerce">쇼핑몰/상점</option>
+                            <option value="accommodation">펜션/숙박업</option>
+                            <option value="medical">병원/의료</option>
+                            <option value="education">학원/교육</option>
+                            <option value="food">F&B (식당/카페)</option>
+                            <option value="corporate">기업/브랜드 소개</option>
+                            <option value="portfolio">개인 포트폴리오</option>
+                            <option value="other">기타</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="mainPurpose">주요 목적 *</label>
+                        <select id="mainPurpose" name="mainPurpose" required>
+                            <option value="">목적을 선택해주세요</option>
+                            <option value="sales">제품/서비스 판매 및 결제</option>
+                            <option value="booking">예약 접수 (숙박, 병원, 상담 등)</option>
+                            <option value="promotion">회사/브랜드/개인 홍보 및 정보 제공</option>
+                            <option value="inquiry">고객 문의 접수 및 상담 연결</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="referenceSites">참고하고 싶은 웹사이트가 있다면 URL을 입력해주세요</label>
+                        <input type="url" id="referenceSites" name="referenceSites" placeholder="https://example.com">
+                        <small class="form-help">* AI가 참고 사이트를 분석하여 더 정확한 견적을 제공합니다</small>
+                    </div>
+                </div>
+
+                <!-- STEP 2: 디자인 방향 -->
+                <div class="form-section step-section" data-step="2">
+                    <h3>🎨 STEP 2. 디자인 방향</h3>
+                    <div class="form-group">
+                        <label>디자인 스타일 (복수 선택 가능) *</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="designStyle" value="modern">
+                                <span>모던하고 심플한</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="designStyle" value="warm">
+                                <span>따뜻하고 감성적인</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="designStyle" value="professional">
+                                <span>전문적이고 신뢰감 있는</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="designStyle" value="creative">
+                                <span>화려하고 개성있는</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="colorTone">색상 톤 *</label>
+                        <select id="colorTone" name="colorTone" required>
+                            <option value="">색상 톤을 선택해주세요</option>
+                            <option value="bright">밝은 톤</option>
+                            <option value="dark">어두운 톤</option>
+                            <option value="brand">특정 브랜드 컬러 사용</option>
+                            <option value="neutral">중성색 계열</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="brandColor">브랜드 컬러 (브랜드 컬러 선택 시)</label>
+                        <input type="color" id="brandColor" name="brandColor" value="#ffffff">
+                    </div>
+                    <div class="form-group">
+                        <label for="logoStatus">로고 준비 상태 *</label>
+                        <select id="logoStatus" name="logoStatus" required>
+                            <option value="">선택해주세요</option>
+                            <option value="ready">네, 가지고 있습니다</option>
+                            <option value="need">아니요, 새로 만들어야 합니다</option>
+                        </select>
+                        <small class="form-help">* 로고 제작이 필요한 경우 추가 비용이 발생할 수 있습니다</small>
+                    </div>
+                </div>
+
+                <!-- STEP 3: 페이지 구성 -->
+                <div class="form-section step-section" data-step="3">
+                    <h3>📄 STEP 3. 페이지 구성</h3>
+                    
+                    <!-- 페이지 수 선택 -->
+                    <div class="form-group">
+                        <label for="pageCount">예상 페이지 수 *</label>
+                        <select id="pageCount" name="pageCount" required>
+                            <option value="">페이지 수를 선택해주세요</option>
+                            <option value="1-5">1-5페이지 (간단한 소개)</option>
+                            <option value="6-10">6-10페이지 (기본 구성)</option>
+                            <option value="11-15">11-15페이지 (상세 구성)</option>
+                            <option value="16-20">16-20페이지 (풍부한 콘텐츠)</option>
+                            <option value="21+">21페이지 이상 (대규모 사이트)</option>
+                        </select>
+                        <small class="form-help">* 선택한 페이지들과 아래 체크박스 선택을 종합하여 최종 페이지 수가 결정됩니다</small>
+                    </div>
+                    
+                    <!-- 필요한 페이지 선택 -->
+                    <div class="form-group">
+                        <label>필요한 페이지를 모두 선택해주세요 *</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="pages" value="intro">
+                                <span>회사/브랜드 소개</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="pages" value="products">
+                                <span>제품/서비스 소개</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="pages" value="gallery">
+                                <span>갤러리/포트폴리</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="pages" value="location">
+                                <span>오시는 길 (지도)</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="pages" value="news">
+                                <span>공지사항/뉴스</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="pages" value="faq">
+                                <span>자주 묻는 질문 (FAQ)</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="pages" value="contact">
+                                <span>문의하기 (간단한 입력폼)</span>
+                            </label>
+                        </div>
+                        <small class="form-help">* 체크박스 선택과 예상 페이지 수를 종합하여 견적이 산정됩니다</small>
+                    </div>
+                    
+                    <!-- 기타 페이지 입력 -->
+                    <div class="form-group">
+                        <label for="customPages">기타 필요한 페이지가 있다면 직접 입력해주세요</label>
+                        <textarea id="customPages" name="customPages" rows="2" placeholder="예: 이벤트 페이지, 팀 소개, 고객 후기 등"></textarea>
+                    </div>
+                </div>
+
+                <!-- STEP 4: 특별 기능 -->
+                <div class="form-section step-section" data-step="4">
+                    <h3>⚙️ STEP 4. 특별 기능</h3>
+                    <div class="form-group">
+                        <label>추가하고 싶은 기능이 있다면 모두 선택해주세요</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="features" value="board">
+                                <span>게시판 기능 (고객 후기, 커뮤니티 등)</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="features" value="booking">
+                                <span>예약 기능 (네이버 예약 연동, 자체 예약 시스템 등)</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="features" value="ecommerce">
+                                <span>쇼핑몰/결제 기능 (PG사 연동 필요)</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="features" value="membership">
+                                <span>회원가입 / 로그인 기능</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="features" value="blog">
+                                <span>블로그/콘텐츠 발행 기능</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="features" value="multilingual">
+                                <span>다국어 지원 (영어, 일본어, 중국어 등)</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="features" value="chat">
+                                <span>채팅 상담 기능 (카카오톡, 채널톡 등 연동)</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="features" value="responsive">
+                                <span>반응형 디자인 (모바일 최적화)</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="features" value="seo">
+                                <span>SEO 최적화</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="features" value="admin">
+                                <span>관리자 페이지</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="features" value="analytics">
+                                <span>방문자 분석</span>
+                            </label>
+                        </div>
+                        <small class="form-help">* 각 기능별로 추가 비용이 발생할 수 있습니다</small>
+                    </div>
+                </div>
+
+                <!-- STEP 5: 콘텐츠 및 관리 -->
+                <div class="form-section step-section" data-step="5">
+                    <h3>📝 STEP 5. 콘텐츠 및 관리</h3>
+                    <div class="form-group">
+                        <label for="contentStatus">홈페이지에 들어갈 사진과 글은 준비 되셨나요? *</label>
+                        <select id="contentStatus" name="contentStatus" required>
+                            <option value="">선택해주세요</option>
+                            <option value="ready">네, 직접 제공할 수 있습니다</option>
+                            <option value="need">아니요, 전문가의 도움이 필요합니다</option>
+                        </select>
+                        <small class="form-help">* 사진 촬영이 필요한 경우 추가 비용이 발생할 수 있습니다</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminNeeds">제작 완료 후, 직접 내용을 수정하고 싶으신가요? *</label>
+                        <select id="adminNeeds" name="adminNeeds" required>
+                            <option value="">선택해주세요</option>
+                            <option value="yes">네, 직접 수정할 수 있는 관리자 페이지가 필요합니다</option>
+                            <option value="no">아니요, 수정할 때마다 전문가에게 요청하겠습니다</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeline">완성 희망 일정 *</label>
+                        <select id="timeline" name="timeline" required>
+                            <option value="">선택해주세요</option>
+                            <option value="urgent">급함 (2주 이내)</option>
+                            <option value="normal">보통 (1-2개월)</option>
+                            <option value="flexible">여유있음 (3개월 이상)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="budget">예산 범위 *</label>
+                        <select id="budget" name="budget" required>
+                            <option value="">선택해주세요</option>
+                            <option value="low">50만원 미만</option>
+                            <option value="medium">50만원 - 200만원</option>
+                            <option value="high">200만원 - 500만원</option>
+                            <option value="premium">500만원 이상</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="additionalInfo">추가로 설명하고 싶은 내용이 있다면 자유롭게 작성해주세요</label>
+                        <textarea id="additionalInfo" name="additionalInfo" rows="4" placeholder="예: 특별히 원하는 기능, 참고하고 싶은 웹사이트, 브랜드 가이드라인 등"></textarea>
+                    </div>
+                </div>
+
+                <!-- 네비게이션 버튼 -->
+                <div class="form-navigation">
+                    <button type="button" id="prevBtn" class="btn-nav btn-prev" style="display: none;">← 이전</button>
+                    <button type="button" id="nextBtn" class="btn-nav btn-next">다음 →</button>
+                    <button type="submit" id="submitBtn" class="btn-submit" style="display: none;">AI 견적 받기</button>
+                </div>
+            </form>
+
+            <div id="quoteResult" class="quote-result" style="display: none;">
+                <h3>🤖 AI 견적 결과</h3>
+                <div id="quoteContent"></div>
+                <div class="quote-partner-inquiry">
+                    <p class="partner-inquiry-text">이 프로젝트를 진행할 수 있는 우수 파트너(업체/프리랜서)에게 실견적 및 상담을 신청 하시겠습니까?</p>
+                </div>
+                <div class="quote-actions">
+                    <div class="quote-buttons">
+                        <button id="contactDevelopers" class="btn-primary">신청하기</button>
+                        <button id="sendQuoteToMe" class="btn-tertiary">나에게 견적서 보내기</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 저장된 견적 모달 -->
+            <div id="savedQuotesModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);justify-content:center;align-items:center;">
+                <div style="background:#fff;max-width:600px;width:90vw;padding:2rem 1.5rem 1.5rem 1.5rem;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);position:relative;">
+                    <button id="closeSavedQuotes" style="position:absolute;top:1rem;right:1rem;font-size:1.2rem;background:none;border:none;cursor:pointer;">✕</button>
+                    <h3 style="margin-bottom:1.2rem;">내 견적 목록</h3>
+                    <div id="savedQuotesList"></div>
+                    <div id="savedQuoteDetail" style="margin-top:1.5rem;"></div>
+                    <div id="savedQuoteActions" style="margin-top:1.5rem;display:none;text-align:center;gap:1rem;">
+                        <button id="modalContactDevelopers" class="btn-primary" style="margin-right:0.5rem;">개발자 연결하기</button>
+                        <button id="modalSendEmail" class="btn-secondary">이메일로 견적서 보내기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 AI 견적파트너. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

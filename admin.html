@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 견적파트너 - 관리자</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .connection-item {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: #f8f9fa;
+        }
+        .connection-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .connection-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .connection-number {
+            background: #667eea;
+            color: #fff;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            min-width: 2.5rem;
+            text-align: center;
+        }
+        .connection-time {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .connection-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            font-size: 0.95rem;
+        }
+        .detail-item {
+            margin-bottom: 0.5rem;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        .quote-summary {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #e6f3ff;
+            border-radius: 6px;
+        }
+        .empty-state {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 3rem;
+        }
+        .refresh-btn {
+            background: #667eea;
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+        .refresh-btn:hover {
+            background: #5a67d8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 AI 견적파트너 - 관리자 페이지</h1>
+        <button class="refresh-btn" onclick="loadConnections()">새로고침</button>
+        <div id="connectionsList"></div>
+    </div>
+
+    <script>
+        function loadConnections() {
+            const connections = JSON.parse(localStorage.getItem('developerConnections') || '[]');
+            const listDiv = document.getElementById('connectionsList');
+            
+            if (connections.length === 0) {
+                listDiv.innerHTML = '<div class="empty-state">아직 개발자 연결 신청이 없습니다.</div>';
+                return;
+            }
+            
+            // 최신 순으로 정렬
+            connections.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            listDiv.innerHTML = connections.map((conn, index) => `
+                <div class="connection-item">
+                    <div class="connection-header">
+                        <div class="connection-title">
+                            <span class="connection-number">#${connections.length - index}</span>
+                            ${conn.formData.businessName || '이름없음'} - ${conn.formData.contactName || ''}
+                        </div>
+                        <div>
+                            <span class="status-pending">대기중</span>
+                            <span class="connection-time">${new Date(conn.timestamp).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div class="connection-details">
+                        <div>
+                            <div class="detail-item"><span class="detail-label">회사/서비스명:</span> ${conn.formData.businessName || ''}</div>
+                            <div class="detail-item"><span class="detail-label">담당자명:</span> ${conn.formData.contactName || ''}</div>
+                            <div class="detail-item"><span class="detail-label">이메일:</span> ${conn.formData.email || ''}</div>
+                            <div class="detail-item"><span class="detail-label">연락처:</span> ${conn.formData.phone || ''}</div>
+                            <div class="detail-item"><span class="detail-label">업종:</span> ${getIndustryName(conn.formData.industry)}</div>
+                            <div class="detail-item"><span class="detail-label">주요 목적:</span> ${getPurposeName(conn.formData.mainPurpose)}</div>
+                            <div class="detail-item"><span class="detail-label">참고 사이트:</span> ${conn.formData.referenceSites || '없음'}</div>
+                            <div class="detail-item"><span class="detail-label">디자인 스타일:</span> ${(conn.formData.designStyle && conn.formData.designStyle.length>0)? conn.formData.designStyle.map(getDesignStyleName).join(', ') : '미선택'}</div>
+                            <div class="detail-item"><span class="detail-label">색상 톤:</span> ${getColorToneName(conn.formData.colorTone) || '미선택'}</div>
+                            <div class="detail-item"><span class="detail-label">브랜드 컬러:</span> ${(conn.formData.brandColor && conn.formData.brandColor !== '' && conn.formData.brandColor.toLowerCase() !== '#ffffff') ? conn.formData.brandColor : '미선택'}</div>
+                            <div class="detail-item"><span class="detail-label">로고 상태:</span> ${getLogoStatusName(conn.formData.logoStatus) || '미선택'}</div>
+                        </div>
+                        <div>
+                            <div class="detail-item"><span class="detail-label">예상 페이지 수:</span> ${conn.formData.pageCount || ''}</div>
+                            <div class="detail-item"><span class="detail-label">선택한 페이지:</span> ${(conn.formData.pages && conn.formData.pages.length>0)? conn.formData.pages.map(getPageName).join(', ') : '없음'}</div>
+                            <div class="detail-item"><span class="detail-label">기타 페이지:</span> ${conn.formData.customPages && conn.formData.customPages.trim()!=='' ? conn.formData.customPages : '없음'}</div>
+                            <div class="detail-item"><span class="detail-label">추가 기능:</span> ${(conn.formData.features && conn.formData.features.length > 0) ? conn.formData.features.map(getFeatureName).join(', ') : '없음'}</div>
+                            <div class="detail-item"><span class="detail-label">콘텐츠 준비 상태:</span> ${getContentStatusName(conn.formData.contentStatus) || '미선택'}</div>
+                            <div class="detail-item"><span class="detail-label">관리자 기능 필요 여부:</span> ${getAdminNeedsName(conn.formData.adminNeeds) || '미선택'}</div>
+                            <div class="detail-item"><span class="detail-label">완성 희망일:</span> ${getTimelineName(conn.formData.timeline)}</div>
+                            <div class="detail-item"><span class="detail-label">예산:</span> ${getBudgetName(conn.formData.budget)}</div>
+                            <div class="detail-item"><span class="detail-label">추가 설명:</span> ${conn.formData.additionalInfo || ''}</div>
+                        </div>
+                    </div>
+                                         <div class="quote-summary">
+                         <strong>예상 견적:</strong><br>
+                         ${shouldShowLowest(conn.formData) && conn.quote.lowest ? `최저가형: ${conn.quote.lowest.price.toLocaleString()}원<br>` : ''}
+                         실속형: ${conn.quote.basic.price.toLocaleString()}원<br>
+                         프리미엄: ${conn.quote.premium.price.toLocaleString()}원
+                         <br><br>
+                         <strong>고객이 선택한 등급:</strong><br>
+                         ${conn.selectedQuotes ? conn.selectedQuotes.map(quote => {
+                             switch(quote) {
+                                 case 'lowest': return '최저가형';
+                                 case 'basic': return '실속형';
+                                 case 'premium': return '프리미엄';
+                                 default: return quote;
+                             }
+                         }).join(', ') : '선택하지 않음'}
+                     </div>
+                </div>
+            `).join('');
+        }
+        
+        function getIndustryName(key) {
+            const names = {
+                'ecommerce': '쇼핑몰/상점',
+                'accommodation': '펜션/숙박업',
+                'medical': '병원/의료',
+                'education': '학원/교육',
+                'food': 'F&B (식당/카페)',
+                'corporate': '기업/브랜드 소개',
+                'portfolio': '개인 포트폴리오',
+                'other': '기타'
+            };
+            return names[key] || key;
+        }
+        
+        function getPurposeName(key) {
+            const names = {
+                'sales': '제품/서비스 판매 및 결제',
+                'booking': '예약 접수',
+                'promotion': '회사/브랜드/개인 홍보 및 정보 제공',
+                'inquiry': '고객 문의 접수 및 상담 연결'
+            };
+            return names[key] || key;
+        }
+        
+        function getTimelineName(key) {
+            const names = {
+                'urgent': '급함 (2주 이내)',
+                'normal': '보통 (1~2개월)',
+                'flexible': '여유있음 (3개월 이상)'
+            };
+            return names[key] || key;
+        }
+        
+        function getBudgetName(key) {
+            const names = {
+                'low': '50만원 미만',
+                'medium': '50만원~200만원',
+                'high': '200만원~500만원',
+                'premium': '500만원 이상'
+            };
+            return names[key] || key;
+        }
+        
+        function getPageName(key){
+            const names = {
+                'intro':'회사/브랜드 소개',
+                'products':'제품/서비스 소개',
+                'gallery':'갤러리/포트폴리오',
+                'location':'오시는 길 (지도)',
+                'news':'공지사항/뉴스',
+                'faq':'자주 묻는 질문 (FAQ)',
+                'contact':'문의하기 (간단한 입력폼)'
+            };
+            return names[key] || key;
+        }
+        function getFeatureName(key){
+            const names = {
+                'board':'게시판 기능',
+                'booking':'예약 기능',
+                'ecommerce':'쇼핑몰/결제 기능',
+                'membership':'회원가입/로그인 기능',
+                'blog':'블로그/콘텐츠 발행 기능',
+                'multilingual':'다국어 지원',
+                'chat':'채팅 상담 기능',
+                'responsive':'반응형 디자인',
+                'seo':'SEO 최적화',
+                'admin':'관리자 페이지',
+                'analytics':'방문자 분석'
+            };
+            return names[key] || key;
+        }
+        function getDesignStyleName(key){
+            const names = {
+                'modern':'모던하고 심플한',
+                'warm':'따뜻하고 감성적인',
+                'professional':'전문적이고 신뢰감 있는',
+                'creative':'화려하고 개성있는'
+            };
+            return names[key] || key;
+        }
+        function getColorToneName(key){
+            const names = {
+                'bright':'밝은 톤',
+                'dark':'어두운 톤',
+                'brand':'특정 브랜드 컬러 사용',
+                'neutral':'중성색 계열'
+            };
+            return names[key] || key;
+        }
+ 
+        function getLogoStatusName(key) {
+            const names = {
+                'ready': '네, 가지고 있습니다',
+                'need': '아니요, 새로 만들어야 합니다'
+            };
+            return names[key] || key;
+        }
+
+        function getContentStatusName(key) {
+            const names = {
+                'ready': '네, 직접 제공할 수 있습니다',
+                'need': '아니요, 전문가의 도움이 필요합니다'
+            };
+            return names[key] || key;
+        }
+
+        function getAdminNeedsName(key) {
+            const names = {
+                'yes': '네, 직접 수정할 수 있는 관리자 페이지가 필요합니다',
+                'no': '아니요, 수정할 때마다 전문가에게 요청하겠습니다'
+            };
+            return names[key] || key;
+        }
+
+        function shouldShowLowest(formData){
+            if (formData.mainPurpose !== 'promotion') return false;
+            if (!(formData.pageCount === '1-5' || formData.pageCount === '6-10')) return false;
+            const forbidden = ['booking','ecommerce','membership','blog','multilingual','chat','admin','analytics'];
+            if (formData.features && formData.features.some(f => forbidden.includes(f))) return false;
+            if (formData.adminNeeds !== 'no') return false;
+            return true;
+        }
+
+        // 페이지 로드 시 연결 목록 불러오기
+        document.addEventListener('DOMContentLoaded', loadConnections);
+    </script>
+</body>
+</html>
