@@ -947,17 +947,22 @@ const modalSendEmail = document.getElementById('modalSendEmail');
 
 let selectedSavedQuote = null;
 
-showSavedQuotesBtn.addEventListener('click', function() {
-    renderSavedQuotesList();
-    savedQuotesModal.style.display = 'flex';
-    // 버튼 문구 강제 지정
-    if (modalSendEmail) modalSendEmail.textContent = '나에게 견적서 보내기';
-});
-closeSavedQuotesBtn.addEventListener('click', function() {
-    savedQuotesModal.style.display = 'none';
-    savedQuoteDetail.innerHTML = '';
-    savedQuoteActions.style.display = 'none';
-});
+if (showSavedQuotesBtn) {
+    showSavedQuotesBtn.addEventListener('click', function() {
+        renderSavedQuotesList();
+        savedQuotesModal.style.display = 'flex';
+        // 버튼 문구 강제 지정
+        if (modalSendEmail) modalSendEmail.textContent = '나에게 견적서 보내기';
+    });
+}
+
+if (closeSavedQuotesBtn) {
+    closeSavedQuotesBtn.addEventListener('click', function() {
+        savedQuotesModal.style.display = 'none';
+        savedQuoteDetail.innerHTML = '';
+        savedQuoteActions.style.display = 'none';
+    });
+}
 
 function renderSavedQuotesList() {
     const savedQuotes = JSON.parse(localStorage.getItem('savedQuotes') || '[]');
