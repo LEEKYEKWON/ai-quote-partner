@@ -150,17 +150,39 @@ function showStep(step) {
         currentSection.classList.add('active');
         console.log('Added active to form section:', currentSection); // 디버깅용
         
-        // 모바일에서 자동 스크롤: 헤더 아래까지만 이동
-        if (window.innerWidth <= 768) {
+        // STEP2부터는 헤더 숨기기, STEP1에서는 헤더 표시
+        const header = document.querySelector('.header');
+        if (header) {
+            if (step === 1) {
+                header.style.display = 'block';
+            } else {
+                header.style.display = 'none';
+            }
+        }
+        
+        // 모든 화면 크기에서 스크롤 제어
+        if (step === 1) {
+            // STEP1: 헤더 아래로 스크롤 (모바일에서만 헤더 높이만큼 추가 스크롤)
             currentSection.scrollIntoView({ 
                 behavior: 'smooth', 
                 block: 'start' 
             });
             
-            // 헤더 높이만큼 추가 스크롤 (헤더 아래로 이동)
-            setTimeout(() => {
-                window.scrollBy(0, -80); // 헤더 높이만큼 위로
-            }, 500);
+            // 모바일에서만 헤더 높이만큼 추가 스크롤
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    window.scrollBy(0, -80); // 헤더 높이만큼 위로
+                }, 500);
+            }
+        } else {
+            // STEP2~5: 진행상황 섹션부터 보이도록 스크롤 (모든 화면 크기)
+            const welcomeSection = document.getElementById('welcomeSection');
+            if (welcomeSection) {
+                welcomeSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
         }
     } else {
         console.error('Form section not found for step:', step); // 디버깅용
