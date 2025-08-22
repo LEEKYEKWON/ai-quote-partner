@@ -120,10 +120,13 @@
 
     <script>
         function loadConnections() {
+            console.log('loadConnections 함수 호출됨');
             const connections = JSON.parse(localStorage.getItem('developerConnections') || '[]');
+            console.log('localStorage에서 가져온 connections:', connections);
             const listDiv = document.getElementById('connectionsList');
             
             if (connections.length === 0) {
+                console.log('connections가 비어있음');
                 listDiv.innerHTML = '<div class="empty-state">아직 개발자 연결 신청이 없습니다.</div>';
                 return;
             }

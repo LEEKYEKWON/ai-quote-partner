@@ -912,6 +912,8 @@ function sendAdminNotification(formData) {
 
 // 개발자 연결 신청 데이터를 관리자 페이지용으로 저장
 function saveDeveloperConnection(formData, quote, selectedQuotes) {
+    console.log('saveDeveloperConnection 함수 호출됨:', { formData, quote, selectedQuotes });
+    
     const connectionData = {
         timestamp: new Date().toISOString(),
         formData: formData,
@@ -922,9 +924,14 @@ function saveDeveloperConnection(formData, quote, selectedQuotes) {
     
     // 로컬 스토리지에 저장 (실제로는 서버 DB에 저장해야 함)
     const connections = JSON.parse(localStorage.getItem('developerConnections') || '[]');
+    console.log('기존 connections:', connections);
+    
     connections.push(connectionData);
     localStorage.setItem('developerConnections', JSON.stringify(connections));
     
+    // 저장 확인
+    const savedConnections = JSON.parse(localStorage.getItem('developerConnections') || '[]');
+    console.log('저장 후 connections:', savedConnections);
     console.log('개발자 연결 신청 저장됨:', connectionData);
 }
 
