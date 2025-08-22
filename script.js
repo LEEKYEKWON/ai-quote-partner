@@ -150,12 +150,17 @@ function showStep(step) {
         currentSection.classList.add('active');
         console.log('Added active to form section:', currentSection); // 디버깅용
         
-        // 모바일에서 자동 스크롤: 상단으로 스크롤
+        // 모바일에서 자동 스크롤: 헤더 아래까지만 이동
         if (window.innerWidth <= 768) {
             currentSection.scrollIntoView({ 
                 behavior: 'smooth', 
                 block: 'start' 
             });
+            
+            // 헤더 높이만큼 추가 스크롤 (헤더 아래로 이동)
+            setTimeout(() => {
+                window.scrollBy(0, -80); // 헤더 높이만큼 위로
+            }, 500);
         }
     } else {
         console.error('Form section not found for step:', step); // 디버깅용
