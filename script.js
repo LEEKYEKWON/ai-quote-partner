@@ -162,14 +162,15 @@ function showStep(step) {
         
         // 모든 화면 크기에서 스크롤 제어
         if (step === 1) {
-            // STEP1: 헤더 아래로 스크롤 (모바일에서만 헤더 높이만큼 추가 스크롤)
-            currentSection.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start' 
-            });
-            
-            // 모바일에서만 헤더 높이만큼 추가 스크롤
-            if (window.innerWidth <= 768) {
+            // STEP1: 진행상황 섹션부터 보이도록 스크롤 (헤더 높이만큼 여백 추가)
+            const welcomeSection = document.getElementById('welcomeSection');
+            if (welcomeSection) {
+                welcomeSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+                
+                // 헤더 높이만큼 추가 스크롤 (헤더에 가려지지 않도록)
                 setTimeout(() => {
                     window.scrollBy(0, -80); // 헤더 높이만큼 위로
                 }, 500);
@@ -1070,6 +1071,13 @@ modalSendEmail.addEventListener('click', function() {
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
+    // 페이지 로드 시 스크롤을 완전히 맨 위로 올림
+    setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+    }, 100);
+    
     showStep(1);
     
     // 실시간 유효성 검사
