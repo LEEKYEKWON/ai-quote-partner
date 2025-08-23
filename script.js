@@ -794,26 +794,26 @@ function showDeveloperConnectionModal(formData, quote, selectedQuotes) {
     const detailsDiv = document.getElementById('connectionDetails');
     const showLowest = getLowestTypeEligibility(formData);
     detailsDiv.innerHTML = `
-        <div><strong>회사/서비스명:</strong> ${formData.businessName || ''}</div>
-        <div><strong>담당자명:</strong> ${formData.contactName || ''}</div>
-        <div><strong>이메일:</strong> ${formData.email || ''}</div>
-        <div><strong>연락처:</strong> ${formData.phone || ''}</div>
-        <div><strong>업종:</strong> ${INDUSTRY_NAMES[formData.industry] || ''}</div>
-        <div><strong>주요 목적:</strong> ${PURPOSE_NAMES[formData.mainPurpose] || ''}</div>
-        <div><strong>참고 사이트:</strong> ${formData.referenceSites || ''}</div>
-        <div><strong>디자인 스타일:</strong> ${(formData.designStyle && formData.designStyle.length > 0) ? formData.designStyle.map(d => DESIGN_STYLE_NAMES[d] || d).join(', ') : ''}</div>
-        <div><strong>색상 톤:</strong> ${COLOR_TONE_NAMES[formData.colorTone] || ''}</div>
-        <div><strong>브랜드 컬러:</strong> ${formData.brandColor || ''}</div>
-        <div><strong>로고 상태:</strong> ${LOGO_STATUS_NAMES[formData.logoStatus] || ''}</div>
-        <div><strong>예상 페이지 수:</strong> ${formData.pageCount || ''}</div>
-        <div><strong>선택한 페이지:</strong> ${(formData.pages && formData.pages.length > 0) ? formData.pages.map(p => PAGE_NAMES[p] || p).join(', ') : '없음'}</div>
-        <div><strong>기타 페이지:</strong> ${formData.customPages || ''}</div>
-        <div><strong>추가 기능:</strong> ${(formData.features && formData.features.length > 0) ? formData.features.map(f => FEATURE_NAMES[f] || f).join(', ') : '없음'}</div>
-        <div><strong>콘텐츠 준비 상태:</strong> ${CONTENT_STATUS_NAMES[formData.contentStatus] || ''}</div>
-        <div><strong>관리자 기능 필요 여부:</strong> ${ADMIN_NEEDS_NAMES[formData.adminNeeds] || ''}</div>
-        <div><strong>완성 희망일:</strong> ${TIMELINE_NAMES[formData.timeline] || ''}</div>
-        <div><strong>예산:</strong> ${BUDGET_NAMES[formData.budget] || ''}</div>
-        <div><strong>추가 설명:</strong> ${formData.additionalInfo || '없음'}</div>
+        <div><strong>1. 회사/서비스명:</strong> ${formData.businessName || ''}</div>
+        <div><strong>2. 담당자명:</strong> ${formData.contactName || ''}</div>
+        <div><strong>3. 이메일:</strong> ${formData.email || ''}</div>
+        <div><strong>4. 연락처:</strong> ${formData.phone || '없음'}</div>
+        <div><strong>5. 업종:</strong> ${INDUSTRY_NAMES[formData.industry] || ''}</div>
+        <div><strong>6. 주요 목적:</strong> ${PURPOSE_NAMES[formData.mainPurpose] || ''}</div>
+        <div><strong>7. 참고 사이트:</strong> ${formData.referenceSites || '없음'}</div>
+        <div><strong>8. 디자인 스타일:</strong> ${(formData.designStyle && formData.designStyle.length > 0) ? formData.designStyle.map(d => DESIGN_STYLE_NAMES[d] || d).join(', ') : ''}</div>
+        <div><strong>9. 색상 톤:</strong> ${COLOR_TONE_NAMES[formData.colorTone] || ''}</div>
+        <div><strong>10. 브랜드 컬러:</strong> ${formData.brandColor === '#ffffff' ? '미선택' : formData.brandColor}</div>
+        <div><strong>11. 로고 상태:</strong> ${LOGO_STATUS_NAMES[formData.logoStatus] || ''}</div>
+        <div><strong>12. 예상 페이지 수:</strong> ${formData.pageCount || ''}</div>
+        <div><strong>13. 선택한 페이지:</strong> ${(formData.pages && formData.pages.length > 0) ? formData.pages.map(p => PAGE_NAMES[p] || p).join(', ') : '없음'}</div>
+        <div><strong>14. 기타 페이지:</strong> ${formData.customPages || '없음'}</div>
+        <div><strong>15. 추가 기능:</strong> ${(formData.features && formData.features.length > 0) ? formData.features.map(f => FEATURE_NAMES[f] || f).join(', ') : '없음'}</div>
+        <div><strong>16. 콘텐츠 준비 상태:</strong> ${CONTENT_STATUS_NAMES[formData.contentStatus] || ''}</div>
+        <div><strong>17. 관리자 기능 필요 여부:</strong> ${ADMIN_NEEDS_NAMES[formData.adminNeeds] || ''}</div>
+        <div><strong>18. 완성 희망일:</strong> ${TIMELINE_NAMES[formData.timeline] || ''}</div>
+        <div><strong>19. 예산:</strong> ${BUDGET_NAMES[formData.budget] || ''}</div>
+        <div><strong>20. 추가 설명:</strong> ${formData.additionalInfo || '없음'}</div>
         <div style="margin-top:1rem;"><strong>예상 견적:</strong><br>
             ${showLowest ? `최저가형: ${quote.lowest.price.toLocaleString()}원<br>` : ''}
             실속형: ${quote.basic.price.toLocaleString()}원<br>
