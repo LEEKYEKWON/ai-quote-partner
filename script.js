@@ -134,6 +134,13 @@ const ADMIN_NEEDS_NAMES = {
     'no': '아니요, 수정할 때마다 전문가에게 요청하겠습니다'
 };
 
+// 견적 등급 한글 변환
+const QUOTE_GRADE_NAMES = {
+    'lowest': '최저가형',
+    'basic': '실속형',
+    'premium': '프리미엄'
+};
+
 // 단계별 진행 관리
 function showStep(step) {
     console.log('showStep called with step:', step); // 디버깅용
@@ -894,7 +901,7 @@ function sendAdminNotification(formData, quote, selectedQuotes) {
         industry: INDUSTRY_NAMES[formData.industry] || formData.industry,
         mainPurpose: PURPOSE_NAMES[formData.mainPurpose] || formData.mainPurpose,
         pageCount: formData.pageCount || '',
-        pages: formData.pages ? formData.pages.join(', ') : '',
+        pages: formData.pages ? formData.pages.map(p => PAGE_NAMES[p] || p).join(', ') : '',
         features: formData.features ? formData.features.map(f => FEATURE_NAMES[f] || f).join(', ') : '',
         designStyle: DESIGN_STYLE_NAMES[formData.designStyle] || formData.designStyle,
         colorTone: COLOR_TONE_NAMES[formData.colorTone] || formData.colorTone,
@@ -905,10 +912,11 @@ function sendAdminNotification(formData, quote, selectedQuotes) {
         timeline: TIMELINE_NAMES[formData.timeline] || formData.timeline,
         budget: BUDGET_NAMES[formData.budget] || formData.budget,
         customPages: formData.customPages || '',
+        additionalNotes: formData.additionalNotes || '',
         lowestPrice: quote.lowest ? quote.lowest.price.toLocaleString() + '원' : '해당없음',
         basicPrice: quote.basic.price.toLocaleString() + '원',
         premiumPrice: quote.premium.price.toLocaleString() + '원',
-        selectedQuotes: selectedQuotes.join(', '),
+        selectedQuotes: selectedQuotes.map(q => QUOTE_GRADE_NAMES[q] || q).join(', '),
         timestamp: new Date().toLocaleString()
     };
     
