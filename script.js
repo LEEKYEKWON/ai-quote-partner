@@ -901,6 +901,7 @@ function sendAdminNotification(formData, quote, selectedQuotes) {
         email: formData.email || '',
         industry: INDUSTRY_NAMES[formData.industry] || formData.industry,
         mainPurpose: PURPOSE_NAMES[formData.mainPurpose] || formData.mainPurpose,
+        referenceSites: formData.referenceSites || '',
         pageCount: formData.pageCount || '',
         pages: formData.pages ? formData.pages.map(p => PAGE_NAMES[p] || p).join(', ') : '',
         features: formData.features ? formData.features.map(f => FEATURE_NAMES[f] || f).join(', ') : '',
