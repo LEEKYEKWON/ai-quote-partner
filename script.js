@@ -813,7 +813,7 @@ function showDeveloperConnectionModal(formData, quote, selectedQuotes) {
         <div><strong>관리자 기능 필요 여부:</strong> ${ADMIN_NEEDS_NAMES[formData.adminNeeds] || ''}</div>
         <div><strong>완성 희망일:</strong> ${TIMELINE_NAMES[formData.timeline] || ''}</div>
         <div><strong>예산:</strong> ${BUDGET_NAMES[formData.budget] || ''}</div>
-        <div><strong>추가 설명:</strong> ${formData.additionalNotes || '없음'}</div>
+        <div><strong>추가 설명:</strong> ${formData.additionalInfo || '없음'}</div>
         <div style="margin-top:1rem;"><strong>예상 견적:</strong><br>
             ${showLowest ? `최저가형: ${quote.lowest.price.toLocaleString()}원<br>` : ''}
             실속형: ${quote.basic.price.toLocaleString()}원<br>
@@ -914,7 +914,7 @@ function sendAdminNotification(formData, quote, selectedQuotes) {
         timeline: TIMELINE_NAMES[formData.timeline] || formData.timeline,
         budget: BUDGET_NAMES[formData.budget] || formData.budget,
         customPages: formData.customPages || '',
-        additionalNotes: formData.additionalNotes || '',
+        additionalNotes: formData.additionalInfo || '',
         lowestPrice: quote.lowest ? quote.lowest.price.toLocaleString() + '원' : '해당없음',
         basicPrice: quote.basic.price.toLocaleString() + '원',
         premiumPrice: quote.premium.price.toLocaleString() + '원',
