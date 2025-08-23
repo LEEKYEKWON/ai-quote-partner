@@ -828,7 +828,7 @@ function showDeveloperConnectionModal(formData, quote, selectedQuotes) {
                 const modal = document.getElementById('developerModal');
                 if (modal) modal.remove();
                 // 관리자에게 자동 이메일 발송
-                sendAdminNotification(formData);
+                sendAdminNotification(formData, quote, selectedQuotes);
                 
                 alert('개발자 연결 신청이 완료되었습니다.\n\n빠르면 1시간 이내, 늦어도 24시간 이내 연결된 개발자가 연락을 드릴 예정입니다.');
             });
@@ -879,7 +879,7 @@ function requestNotificationPermission() {
 }
 
 // 관리자에게 자동 이메일 발송
-function sendAdminNotification(formData) {
+function sendAdminNotification(formData, quote, selectedQuotes) {
     // EmailJS 설정 (무료 계정 필요)
     emailjs.init("gLAhNlqPXdcS1EmTt"); // EmailJS에서 발급받은 Public Key 입력
     
@@ -892,6 +892,23 @@ function sendAdminNotification(formData) {
         phone: formData.phone || '',
         email: formData.email || '',
         industry: INDUSTRY_NAMES[formData.industry] || formData.industry,
+        mainPurpose: PURPOSE_NAMES[formData.mainPurpose] || formData.mainPurpose,
+        pageCount: formData.pageCount || '',
+        pages: formData.pages ? formData.pages.join(', ') : '',
+        features: formData.features ? formData.features.map(f => FEATURE_NAMES[f] || f).join(', ') : '',
+        designStyle: DESIGN_STYLE_NAMES[formData.designStyle] || formData.designStyle,
+        colorTone: COLOR_TONE_NAMES[formData.colorTone] || formData.colorTone,
+        brandColor: formData.brandColor || '미선택',
+        logoStatus: LOGO_STATUS_NAMES[formData.logoStatus] || formData.logoStatus,
+        contentStatus: CONTENT_STATUS_NAMES[formData.contentStatus] || formData.contentStatus,
+        adminNeeds: ADMIN_NEEDS_NAMES[formData.adminNeeds] || formData.adminNeeds,
+        timeline: TIMELINE_NAMES[formData.timeline] || formData.timeline,
+        budget: BUDGET_NAMES[formData.budget] || formData.budget,
+        customPages: formData.customPages || '',
+        lowestPrice: quote.lowest ? quote.lowest.price.toLocaleString() + '원' : '해당없음',
+        basicPrice: quote.basic.price.toLocaleString() + '원',
+        premiumPrice: quote.premium.price.toLocaleString() + '원',
+        selectedQuotes: selectedQuotes.join(', '),
         timestamp: new Date().toLocaleString()
     };
     
