@@ -119,10 +119,86 @@
     </div>
 
     <script>
-        function loadConnections() {
+        // Supabase 클라이언트 설정
+        const SUPABASE_URL = 'https://blflwlysgpquyinywupm.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsZmx3bHlzZ3BxdXlpbnl3dXBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwMDkxNTcsImV4cCI6MjA3MTU4NTE1N30.xW5Uyqk5lgN5QJBnWygvw6hDs4N9cpE7rabJLwOAe80'
+        
+        // Supabase 클라이언트 생성
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        
+        async function loadConnections() {
             console.log('loadConnections 함수 호출됨');
-            const connections = JSON.parse(localStorage.getItem('developerConnections') || '[]');
-            console.log('localStorage에서 가져온 connections:', connections);
+            
+            try {
+                // Supabase에서 데이터 로드
+                const { data: connections, error } = await supabaseClient
+                    .from('developer_connections')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) {
+                    console.error('Supabase 로드 실패:', error);
+                    // 실패 시 localStorage에서 로드
+                    const localConnections = JSON.parse(localStorage.getItem('developerConnections') || '[]');
+                    console.log('localStorage에서 가져온 connections:', localConnections);
+                    renderConnections(localConnections);
+                    return;
+                }
+                
+                console.log('Supabase에서 가져온 connections:', connections);
+                
+                if (connections.length === 0) {
+                    console.log('connections가 비어있음');
+                    const listDiv = document.getElementById('connectionsList');
+                    listDiv.innerHTML = '<div class="empty-state">아직 개발자 연결 신청이 없습니다.</div>';
+                    return;
+                }
+                
+                // Supabase 데이터를 기존 형식에 맞게 변환
+                const formattedConnections = connections.map(conn => ({
+                    formData: {
+                        businessName: conn.business_name,
+                        contactName: conn.contact_name,
+                        email: conn.email,
+                        phone: conn.phone,
+                        industry: conn.industry,
+                        mainPurpose: conn.main_purpose,
+                        referenceSites: conn.reference_sites,
+                        designStyle: conn.design_style,
+                        colorTone: conn.color_tone,
+                        brandColor: conn.brand_color,
+                        logoStatus: conn.logo_status,
+                        pageCount: conn.page_count,
+                        pages: conn.selected_pages,
+                        customPages: conn.custom_pages,
+                        features: conn.features,
+                        contentStatus: conn.content_status,
+                        adminNeeds: conn.admin_needs,
+                        timeline: conn.timeline,
+                        budget: conn.budget,
+                        additionalInfo: conn.additional_info
+                    },
+                    quote: {
+                        lowest: conn.lowest_price ? { price: conn.lowest_price } : null,
+                        basic: { price: conn.basic_price },
+                        premium: { price: conn.premium_price }
+                    },
+                    selectedQuotes: conn.selected_quotes,
+                    timestamp: conn.created_at
+                }));
+                
+                renderConnections(formattedConnections);
+                
+            } catch (error) {
+                console.error('데이터 로드 중 오류:', error);
+                // 오류 시 localStorage에서 로드
+                const localConnections = JSON.parse(localStorage.getItem('developerConnections') || '[]');
+                console.log('localStorage에서 가져온 connections:', localConnections);
+                renderConnections(localConnections);
+            }
+        }
+        
+        function renderConnections(connections) {
             const listDiv = document.getElementById('connectionsList');
             
             if (connections.length === 0) {
@@ -318,5 +394,6 @@
         // 페이지 로드 시 연결 목록 불러오기
         document.addEventListener('DOMContentLoaded', loadConnections);
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 </html>
