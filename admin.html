@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI 견적파트너 - 관리자</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -128,6 +129,8 @@
         
         async function loadConnections() {
             console.log('loadConnections 함수 호출됨');
+            console.log('supabaseClient 확인:', supabaseClient);
+            console.log('supabase 객체 확인:', typeof supabase);
             
             try {
                 // Supabase에서 데이터 로드
@@ -391,9 +394,11 @@
             return true;
         }
 
-        // 페이지 로드 시 연결 목록 불러오기
-        document.addEventListener('DOMContentLoaded', loadConnections);
+        // 페이지 로드 시 연결 목록 불러오기 (Supabase 로드 완료 후)
+        window.addEventListener('load', function() {
+            console.log('페이지 완전 로드됨');
+            setTimeout(loadConnections, 1000); // 1초 후 실행
+        });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 </html>
