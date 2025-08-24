@@ -938,29 +938,74 @@ function sendAdminNotification(formData, quote, selectedQuotes) {
         });
 }
 
-// 개발자 연결 신청 데이터를 관리자 페이지용으로 저장
-function saveDeveloperConnection(formData, quote, selectedQuotes) {
+// 개발자 연결 신청 데이터를 Supabase 데이터베이스에 저장
+async function saveDeveloperConnection(formData, quote, selectedQuotes) {
     console.log('saveDeveloperConnection 함수 호출됨:', { formData, quote, selectedQuotes });
     
-    const connectionData = {
-        timestamp: new Date().toISOString(),
-        formData: formData,
-        quote: quote,
-        selectedQuotes: selectedQuotes, // 고객이 선택한 등급들
-        status: 'pending' // 대기중
-    };
-    
-    // 로컬 스토리지에 저장 (실제로는 서버 DB에 저장해야 함)
-    const connections = JSON.parse(localStorage.getItem('developerConnections') || '[]');
-    console.log('기존 connections:', connections);
-    
-    connections.push(connectionData);
-    localStorage.setItem('developerConnections', JSON.stringify(connections));
-    
-    // 저장 확인
-    const savedConnections = JSON.parse(localStorage.getItem('developerConnections') || '[]');
-    console.log('저장 후 connections:', savedConnections);
-    console.log('개발자 연결 신청 저장됨:', connectionData);
+    try {
+        // Supabase에 데이터 저장
+        const { data, error } = await supabase
+            .from('developer_connections')
+            .insert([{
+                business_name: formData.businessName || '',
+                contact_name: formData.contactName || '',
+                email: formData.email || '',
+                phone: formData.phone || '',
+                industry: formData.industry || '',
+                main_purpose: formData.mainPurpose || '',
+                reference_sites: formData.referenceSites || '',
+                design_style: formData.designStyle || [],
+                color_tone: formData.colorTone || '',
+                brand_color: formData.brandColor || '',
+                logo_status: formData.logoStatus || '',
+                page_count: formData.pageCount || '',
+                selected_pages: formData.pages || [],
+                custom_pages: formData.customPages || '',
+                features: formData.features || [],
+                content_status: formData.contentStatus || '',
+                admin_needs: formData.adminNeeds || '',
+                timeline: formData.timeline || '',
+                budget: formData.budget || '',
+                additional_info: formData.additionalInfo || '',
+                selected_quotes: selectedQuotes || [],
+                lowest_price: quote.lowest ? quote.lowest.price : null,
+                basic_price: quote.basic.price,
+                premium_price: quote.premium.price,
+                status: 'pending'
+            }]);
+        
+        if (error) {
+            console.error('Supabase 저장 실패:', error);
+            // 실패 시 localStorage에 백업 저장
+            const connectionData = {
+                timestamp: new Date().toISOString(),
+                formData: formData,
+                quote: quote,
+                selectedQuotes: selectedQuotes,
+                status: 'pending'
+            };
+            const connections = JSON.parse(localStorage.getItem('developerConnections') || '[]');
+            connections.push(connectionData);
+            localStorage.setItem('developerConnections', JSON.stringify(connections));
+            console.log('localStorage 백업 저장 완료');
+        } else {
+            console.log('Supabase 저장 성공:', data);
+        }
+    } catch (error) {
+        console.error('저장 중 오류 발생:', error);
+        // 오류 시 localStorage에 백업 저장
+        const connectionData = {
+            timestamp: new Date().toISOString(),
+            formData: formData,
+            quote: quote,
+            selectedQuotes: selectedQuotes,
+            status: 'pending'
+        };
+        const connections = JSON.parse(localStorage.getItem('developerConnections') || '[]');
+        connections.push(connectionData);
+        localStorage.setItem('developerConnections', JSON.stringify(connections));
+        console.log('localStorage 백업 저장 완료');
+    }
 }
 
 // 저장된 견적 보기 모달 관련
@@ -992,36 +1037,110 @@ if (closeSavedQuotesBtn) {
     });
 }
 
-function renderSavedQuotesList() {
-    const savedQuotes = JSON.parse(localStorage.getItem('savedQuotes') || '[]');
-    if (savedQuotes.length === 0) {
-        savedQuotesList.innerHTML = '<div style="color:#888;">저장된 견적이 없습니다.</div>';
-        savedQuoteDetail.innerHTML = '';
-        savedQuoteActions.style.display = 'none';
-        return;
-    }
-    // 모든 견적을 최신순(가장 최근이 위)으로 표시
-    const reversed = [...savedQuotes].reverse();
-    savedQuotesList.innerHTML = reversed.map((q, idx) =>
-        `<div class="saved-quote-item" data-idx="${savedQuotes.length - 1 - idx}">
-            <strong>${q.formData.businessName || '이름없음'}</strong> <span style="color:#888;font-size:0.9em;">(${new Date(q.timestamp).toLocaleString()})</span>
-        </div>`
-    ).join('');
-    // 클릭 이벤트
-    const items = Array.from(savedQuotesList.querySelectorAll('.saved-quote-item'));
-    items.forEach((item, i) => {
-        item.addEventListener('click', function() {
-            items.forEach(i => i.classList.remove('selected'));
-            this.classList.add('selected');
-            const idx = parseInt(this.getAttribute('data-idx'));
-            selectedSavedQuote = savedQuotes[idx];
+async function renderSavedQuotesList() {
+    try {
+        // Supabase에서 데이터 로드
+        const { data: connections, error } = await supabase
+            .from('developer_connections')
+            .select('*')
+            .order('created_at', { ascending: false });
+        
+        if (error) {
+            console.error('Supabase 로드 실패:', error);
+            // 실패 시 localStorage에서 로드
+            const savedQuotes = JSON.parse(localStorage.getItem('savedQuotes') || '[]');
+            if (savedQuotes.length === 0) {
+                savedQuotesList.innerHTML = '<div style="color:#888;">저장된 견적이 없습니다.</div>';
+                savedQuoteDetail.innerHTML = '';
+                savedQuoteActions.style.display = 'none';
+                return;
+            }
+            
+            // localStorage 데이터 처리
+            const reversed = [...savedQuotes].reverse();
+            savedQuotesList.innerHTML = reversed.map((q, idx) =>
+                `<div class="saved-quote-item" data-idx="${savedQuotes.length - 1 - idx}">
+                    <strong>${q.formData.businessName || '이름없음'}</strong> <span style="color:#888;font-size:0.9em;">(${new Date(q.timestamp).toLocaleString()})</span>
+                </div>`
+            ).join('');
+            
+            // 클릭 이벤트
+            const items = Array.from(savedQuotesList.querySelectorAll('.saved-quote-item'));
+            items.forEach((item, i) => {
+                item.addEventListener('click', function() {
+                    items.forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                    const idx = parseInt(this.getAttribute('data-idx'));
+                    selectedSavedQuote = savedQuotes[idx];
+                    renderSavedQuoteDetail(selectedSavedQuote);
+                });
+            });
+            
+            // 첫 번째 견적 자동 선택
+            selectedSavedQuote = savedQuotes[savedQuotes.length - 1];
             renderSavedQuoteDetail(selectedSavedQuote);
+            if (items.length > 0) items[0].classList.add('selected');
+            return;
+        }
+        
+        if (connections.length === 0) {
+            savedQuotesList.innerHTML = '<div style="color:#888;">저장된 견적이 없습니다.</div>';
+            savedQuoteDetail.innerHTML = '';
+            savedQuoteActions.style.display = 'none';
+            return;
+        }
+        
+        // Supabase 데이터를 기존 형식에 맞게 변환
+        const savedQuotes = connections.map(conn => ({
+            formData: {
+                businessName: conn.business_name,
+                industry: conn.industry,
+                budget: conn.budget,
+                pages: conn.selected_pages,
+                features: conn.features,
+                pageCount: conn.page_count,
+                contentStatus: conn.content_status,
+                adminNeeds: conn.admin_needs,
+                timeline: conn.timeline,
+                additionalInfo: conn.additional_info
+            },
+            quote: {
+                lowest: conn.lowest_price ? { price: conn.lowest_price } : null,
+                basic: { price: conn.basic_price },
+                premium: { price: conn.premium_price }
+            },
+            timestamp: conn.created_at
+        }));
+        
+        // 모든 견적을 최신순(가장 최근이 위)으로 표시
+        const reversed = [...savedQuotes].reverse();
+        savedQuotesList.innerHTML = reversed.map((q, idx) =>
+            `<div class="saved-quote-item" data-idx="${savedQuotes.length - 1 - idx}">
+                <strong>${q.formData.businessName || '이름없음'}</strong> <span style="color:#888;font-size:0.9em;">(${new Date(q.timestamp).toLocaleString()})</span>
+            </div>`
+        ).join('');
+        
+        // 클릭 이벤트
+        const items = Array.from(savedQuotesList.querySelectorAll('.saved-quote-item'));
+        items.forEach((item, i) => {
+            item.addEventListener('click', function() {
+                items.forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+                const idx = parseInt(this.getAttribute('data-idx'));
+                selectedSavedQuote = savedQuotes[idx];
+                renderSavedQuoteDetail(selectedSavedQuote);
+            });
         });
-    });
-    // 첫 번째 견적 자동 선택
-    selectedSavedQuote = savedQuotes[savedQuotes.length - 1];
-    renderSavedQuoteDetail(selectedSavedQuote);
-    if (items.length > 0) items[0].classList.add('selected');
+        
+        // 첫 번째 견적 자동 선택
+        selectedSavedQuote = savedQuotes[savedQuotes.length - 1];
+        renderSavedQuoteDetail(selectedSavedQuote);
+        if (items.length > 0) items[0].classList.add('selected');
+        
+    } catch (error) {
+        console.error('데이터 로드 중 오류:', error);
+        savedQuotesList.innerHTML = '<div style="color:#888;">데이터 로드 중 오류가 발생했습니다.</div>';
+    }
 }
 
 function renderSavedQuoteDetail(q) {
@@ -1264,3 +1383,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Supabase 클라이언트 설정
+const SUPABASE_URL = 'https://blflwlysgpquyinywupm.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsZmx3bHlzZ3BxdXlpbnl3dXBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwMDkxNTcsImV4cCI6MjA3MTU4NTE1N30.xW5Uyqk5lgN5QJBnWygvw6hDs4N9cpE7rabJLwOAe80'
+
+// Supabase 클라이언트 생성
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
