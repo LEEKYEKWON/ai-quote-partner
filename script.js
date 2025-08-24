@@ -943,8 +943,9 @@ async function saveDeveloperConnection(formData, quote, selectedQuotes) {
     console.log('saveDeveloperConnection 함수 호출됨:', { formData, quote, selectedQuotes });
     
     try {
+        console.log('Supabase 저장 시작...');
         // Supabase에 데이터 저장
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('developer_connections')
             .insert([{
                 business_name: formData.businessName || '',
@@ -1040,7 +1041,7 @@ if (closeSavedQuotesBtn) {
 async function renderSavedQuotesList() {
     try {
         // Supabase에서 데이터 로드
-        const { data: connections, error } = await supabase
+        const { data: connections, error } = await supabaseClient
             .from('developer_connections')
             .select('*')
             .order('created_at', { ascending: false });
@@ -1389,4 +1390,4 @@ const SUPABASE_URL = 'https://blflwlysgpquyinywupm.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsZmx3bHlzZ3BxdXlpbnl3dXBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwMDkxNTcsImV4cCI6MjA3MTU4NTE1N30.xW5Uyqk5lgN5QJBnWygvw6hDs4N9cpE7rabJLwOAe80'
 
 // Supabase 클라이언트 생성
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
