@@ -6,9 +6,45 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const submitBtn = document.getElementById('submitBtn');
 
+// 홈 화면 관련 요소들
+const homeSection = document.getElementById('homeSection');
+const welcomeSection = document.getElementById('welcomeSection');
+const startQuoteBtn = document.getElementById('startQuoteBtn');
+const ctaStartBtn = document.getElementById('ctaStartBtn');
+
 // 현재 단계 관리
 let currentStep = 1;
 const totalSteps = 5;
+
+// 페이지 초기화
+document.addEventListener('DOMContentLoaded', function() {
+    // 홈 화면을 기본으로 보여주기
+    showHomeSection();
+    
+    // 기존 이벤트 리스너들 설정
+    setupEventListeners();
+});
+
+// 홈 화면 표시 함수
+function showHomeSection() {
+    if (homeSection) homeSection.style.display = 'block';
+    if (welcomeSection) welcomeSection.style.display = 'none';
+    if (quoteForm) quoteForm.style.display = 'none';
+    if (quoteResult) quoteResult.style.display = 'none';
+}
+
+// 견적 폼 표시 함수
+function showQuoteForm() {
+    if (homeSection) homeSection.style.display = 'none';
+    if (welcomeSection) welcomeSection.style.display = 'block';
+    if (quoteForm) quoteForm.style.display = 'block';
+    if (quoteResult) quoteResult.style.display = 'none';
+    
+    // 페이지 위쪽으로 스크롤
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
 
 // 견적 가격 기준 (템플릿 기반 제작, 현실적 가격)
 const PRICE_BASE = {
@@ -611,58 +647,75 @@ function getLowestTypeUnmetReasons(formData) {
     return reasons;
 }
 
-// 이벤트 리스너
-nextBtn.addEventListener('click', function() {
-    if (validateCurrentStep()) {
-        nextStep();
-    } else {
-        alert('필수 항목을 모두 입력해주세요.');
+// 이벤트 리스너 설정
+function setupEventListeners() {
+    // 시작하기 버튼들
+    if (startQuoteBtn) {
+        startQuoteBtn.addEventListener('click', showQuoteForm);
     }
-});
-
-prevBtn.addEventListener('click', function() {
-    prevStep();
-});
-
-// 폼 제출 처리
-quoteForm.addEventListener('submit', function(e) {
-    e.preventDefault();
+    if (ctaStartBtn) {
+        ctaStartBtn.addEventListener('click', showQuoteForm);
+    }
     
-    if (validateCurrentStep()) {
-        // 로딩 상태 표시
-        const loadingState = document.getElementById('loadingState');
-        const quoteForm = document.getElementById('quoteForm');
-        
-        if (loadingState && quoteForm) {
-            loadingState.style.display = 'block';
-            quoteForm.style.display = 'none';
-            
-            // 견적 계산 시뮬레이션 (실제로는 즉시 계산되지만 사용자 경험을 위해)
-            setTimeout(() => {
-                const formData = collectFormData();
-                
-                // AI 견적 생성
-                const quote = generateAIQuote(formData);
-                
-                // 로딩 상태 숨기기
-                loadingState.style.display = 'none';
-                quoteForm.style.display = 'block';
-                
-                // 결과 표시
-                renderQuote(quote, formData);
-                quoteResult.style.display = 'block';
-                
-                // 견적 결과 버튼들 이벤트 바인딩
-                bindQuoteResultButtons(formData, quote);
-                
-                // 결과로 스크롤
-                quoteResult.scrollIntoView({ behavior: 'smooth' });
-            }, 2000); // 2초 로딩 표시
-        }
-    } else {
-        alert('필수 항목을 모두 입력해주세요.');
+    // 폼 네비게이션 버튼들
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            if (validateCurrentStep()) {
+                nextStep();
+            } else {
+                alert('필수 항목을 모두 입력해주세요.');
+            }
+        });
     }
-});
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+            prevStep();
+        });
+    }
+    
+    // 폼 제출 처리
+    if (quoteForm) {
+        quoteForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (validateCurrentStep()) {
+                // 로딩 상태 표시
+                const loadingState = document.getElementById('loadingState');
+                const quoteForm = document.getElementById('quoteForm');
+                
+                if (loadingState && quoteForm) {
+                    loadingState.style.display = 'block';
+                    quoteForm.style.display = 'none';
+                    
+                    // 견적 계산 시뮬레이션 (실제로는 즉시 계산되지만 사용자 경험을 위해)
+                    setTimeout(() => {
+                        const formData = collectFormData();
+                        
+                        // AI 견적 생성
+                        const quote = generateAIQuote(formData);
+                        
+                        // 로딩 상태 숨기기
+                        loadingState.style.display = 'none';
+                        quoteForm.style.display = 'block';
+                        
+                        // 결과 표시
+                        renderQuote(quote, formData);
+                        quoteResult.style.display = 'block';
+                        
+                        // 견적 결과 버튼들 이벤트 바인딩
+                        bindQuoteResultButtons(formData, quote);
+                        
+                        // 결과로 스크롤
+                        quoteResult.scrollIntoView({ behavior: 'smooth' });
+                    }, 2000); // 2초 로딩 표시
+                }
+            } else {
+                alert('필수 항목을 모두 입력해주세요.');
+            }
+        });
+    }
+}
 
 // 견적서 저장 버튼은 현재 UI에서 제거됨. 안전을 위해 존재할 때만 동작하도록 보호
 if (typeof saveQuoteBtn !== 'undefined' && saveQuoteBtn) {
